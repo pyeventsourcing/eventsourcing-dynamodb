@@ -1,0 +1,37 @@
+[project]
+name = "eventsourcing_dynamodb"
+version = "0.1.0"
+description = "Python package for eventsourcing with DynamoDB"
+authors = [
+    {name = "John Bywater",email = "john.bywater@appropriatesoftware.net"}
+]
+license = {text = "BSD 3-Clause"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python",
+]
+readme = "README.md"
+homepage = "https://github.com/pyeventsourcing/eventsourcing-dynamodb"
+repository = "https://github.com/pyeventsourcing/eventsourcing-dynamodb"
+include = ["eventsourcing_dynamodb/py.typed"]
+
+
+[tool.poetry.dependencies]
+python = ">=3.9, <4.0"
+eventsourcing = "~9.3"
+boto3 = ">=1.36,<2.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pycryptodome = "^3.21.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
