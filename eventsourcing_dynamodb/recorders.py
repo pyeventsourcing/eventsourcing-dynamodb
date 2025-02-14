@@ -123,3 +123,6 @@ class DynamoProcessRecorder(DynamoApplicationRecorder, ProcessRecorder):
 
     def max_tracking_id(self, application_name: str) -> int:
         raise NotImplementedError()
+
+    def has_tracking_id(self, application_name: str, notification_id: int) -> bool:
+        raise NotImplementedError()
