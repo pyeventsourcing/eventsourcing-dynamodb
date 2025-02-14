@@ -8,11 +8,11 @@ from eventsourcing.persistence import (
     InfrastructureFactory,
     ProcessRecorder,
 )
-from eventsourcing.tests.infrastructure_testcases import InfrastructureFactoryTestCase
-from eventsourcing.utils import get_topic
+from eventsourcing.tests.persistence import InfrastructureFactoryTestCase
+from eventsourcing.utils import Environment
 
-from factory import Factory
-from recorders import (
+from eventsourcing_dynamodb.factory import Factory
+from eventsourcing_dynamodb.recorders import (
     DynamoAggregateRecorder,
     DynamoApplicationRecorder,
     DynamoProcessRecorder
@@ -36,9 +36,10 @@ class TestFactory(InfrastructureFactoryTestCase):
         return DynamoProcessRecorder
 
     def setUp(self) -> None:
-        os.environ[InfrastructureFactory.TOPIC] = get_topic(Factory)
-        os.environ[Factory.DYNAMO_TABLE] = "dynamo_events"
-        os.environ[Factory.ENDPOINT_URL] = "http://localhost:8000"
+        self.env = Environment("TestCase")
+        self.env[InfrastructureFactory.PERSISTENCE_MODULE] = Factory.__module__
+        self.env[Factory.DYNAMO_TABLE] = "dynamo_events"
+        self.env[Factory.ENDPOINT_URL] = "http://localhost:8000"
         super().setUp()
 
     def tearDown(self) -> None:
