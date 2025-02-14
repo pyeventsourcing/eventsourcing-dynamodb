@@ -7,7 +7,6 @@ from eventsourcing.persistence import (
 )
 from eventsourcing.utils import Environment
 
-
 from eventsourcing_dynamodb.recorders import (
     DynamoAggregateRecorder,
     DynamoApplicationRecorder,

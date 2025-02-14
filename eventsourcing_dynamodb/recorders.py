@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Any, List, Optional
+from typing import Any, List, Sequence
 from uuid import UUID
 
 from boto3.dynamodb.conditions import Key
@@ -29,12 +29,6 @@ class DynamoAggregateRecorder(AggregateRecorder):
         table = self.dynamo_resource.Table(self.dynamo_table_name)
         with table.batch_writer() as batch:
             for event in stored_events:
-                dynamo_event = DynamoStoredEvent(
-                    originator_id=str(event.originator_id),
-                    originator_version=event.originator_version,
-                    topic=event.topic,
-                    state=event.state,
-                )
                 item = {
                     "originator_id": str(event.originator_id),
                     "originator_version": event.originator_version,
@@ -44,12 +38,15 @@ class DynamoAggregateRecorder(AggregateRecorder):
                 }
                 batch.put_item(Item=item)
 
-    def select_events(self,
-                      originator_id: UUID,
-                      gt: Optional[int] = None,
-                      lte: Optional[int] = None,
-                      desc: bool = False,
-                      limit: Optional[int] = None) -> List[StoredEvent]:
+    def select_events(
+        self,
+        originator_id: UUID,
+        *,
+        gt: int | None = None,
+        lte: int | None = None,
+        desc: bool = False,
+        limit: int | None = None,
+    ) -> list[StoredEvent]:
         # Get records from dynamoDB
         records = self._get_events_from_dynamo(originator_id)
         # Filter
@@ -107,8 +104,15 @@ class DynamoAggregateRecorder(AggregateRecorder):
 
 class DynamoApplicationRecorder(DynamoAggregateRecorder, ApplicationRecorder):
 
-    def select_notifications(self, start: int,
-                             limit: int) -> List[Notification]:
+    def select_notifications(
+        self,
+        start: int | None,
+        limit: int,
+        stop: int | None = None,
+        topics: Sequence[str] = (),
+        *,
+        inclusive_of_start: bool = True,
+    ) -> list[Notification]:
         raise NotImplementedError()
 
     def max_notification_id(self) -> int:
