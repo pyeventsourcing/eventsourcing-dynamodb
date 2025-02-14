@@ -1,5 +1,3 @@
-from typing import Mapping
-
 import boto3
 from eventsourcing.persistence import (
     AggregateRecorder,
@@ -7,6 +5,8 @@ from eventsourcing.persistence import (
     InfrastructureFactory,
     ProcessRecorder,
 )
+from eventsourcing.utils import Environment
+
 
 from eventsourcing_dynamodb.recorders import (
     DynamoAggregateRecorder,
@@ -16,18 +16,21 @@ from eventsourcing_dynamodb.recorders import (
 
 
 class Factory(InfrastructureFactory):
+    """
+    Infrastructure factory for DynamoDB infrastructure.
+    """
 
     DYNAMO_TABLE = "DYNAMO_TABLE"
     ENDPOINT_URL = "DYNAMO_ENDPOINT_URL"
 
-    def __init__(self, application_name: str, env: Mapping[str, str]):
-        super().__init__(application_name, env)
-        db_name = self.getenv(self.DYNAMO_TABLE)
+    def __init__(self, env: Environment):
+        super().__init__(env)
+        db_name = self.env.get(self.DYNAMO_TABLE)
         if db_name is None:
             raise EnvironmentError("DynamoDB table not found "
                                    "in environment with key "
                                    f"'{self.DYNAMO_TABLE}'")
-        endpoint_url = self.getenv(self.ENDPOINT_URL)
+        endpoint_url = self.env.get(self.ENDPOINT_URL)
         if endpoint_url:
             self.dynamo_resource = boto3.resource('dynamodb',
                                                   endpoint_url=endpoint_url)
