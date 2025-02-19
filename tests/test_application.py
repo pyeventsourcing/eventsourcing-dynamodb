@@ -14,17 +14,19 @@ from eventsourcing.tests.application import (
 from eventsourcing.tests.domain import BankAccount
 from eventsourcing.utils import get_topic
 
+
 class TestApplicationWithDynamoDB(ExampleApplicationTestCase):
     timeit_number = 30 * TIMEIT_FACTOR
     expected_factory_topic = "eventsourcing_dynamodb.factory:Factory"
 
     def setUp(self) -> None:
         self.original_initial_version = Aggregate.INITIAL_VERSION
-        #Aggregate.INITIAL_VERSION = 1
+        Aggregate.INITIAL_VERSION = 1
         super().setUp()
         os.environ["PERSISTENCE_MODULE"] = "eventsourcing_dynamodb"
         os.environ["DYNAMO_TABLE"] = "dynamo_events"
         os.environ["DYNAMO_ENDPOINT_URL"] = "http://localhost:8000"
+        os.environ["IS_SNAPSHOTTING_ENABLED"] = "false"
 
     def tearDown(self) -> None:
         Aggregate.INITIAL_VERSION = self.original_initial_version
@@ -40,13 +42,18 @@ class TestApplicationWithDynamoDB(ExampleApplicationTestCase):
             del os.environ["DYNAMO_ENDPOINT_URL"]
         except KeyError:
             pass
+        try:
+            del os.environ["IS_SNAPSHOTTING_ENABLED"]
+        except KeyError:
+            pass
         super().tearDown()
 
     def test_example_application(self) -> None:
         app = BankAccounts()
 
         # Check the factory topic.
-        self.assertEqual(get_topic(type(app.factory)), self.expected_factory_topic)
+        self.assertEqual(get_topic(type(app.factory)),
+                         self.expected_factory_topic)
 
         # Check AccountNotFound exception.
         with self.assertRaises(BankAccounts.AccountNotFoundError):
@@ -92,8 +99,8 @@ class TestApplicationWithDynamoDB(ExampleApplicationTestCase):
         )
 
         # Get historical version.
-        account: BankAccount = app.repository.get(account_id1, version=1)
-        self.assertEqual(account.version, 1)
+        account: BankAccount = app.repository.get(account_id1, version=2)
+        self.assertEqual(account.version, 2)
         self.assertEqual(account.balance, Decimal("10.00"))
 
         # # Take snapshot (don't specify version).
@@ -146,6 +153,7 @@ class TestApplicationWithDynamoDB(ExampleApplicationTestCase):
         app.credit_account(account_id3, Decimal("30.00"))
 
     def test_event_sourced_log(self) -> None:
+
         class LoggedEvent(DomainEvent):
             name: str
 
