@@ -20,12 +20,11 @@ logger = logging.getLogger()
 
 class DynamoAggregateRecorder(AggregateRecorder):
 
-    def __init__(self, dynamo_table_name, dynamo_resource):
+    def __init__(self, dynamo_table_name: str, dynamo_resource: Any):
         self.dynamo_table_name = dynamo_table_name
         self.dynamo_resource = dynamo_resource
 
-    def insert_events(self, stored_events: List[StoredEvent],
-                      **kwargs: Any) -> None:
+    def insert_events(self, stored_events: List[StoredEvent], **kwargs: Any) -> None:
         table = self.dynamo_resource.Table(self.dynamo_table_name)
         with table.batch_writer() as batch:
             for event in stored_events:
@@ -48,22 +47,21 @@ class DynamoAggregateRecorder(AggregateRecorder):
         limit: int | None = None,
     ) -> list[StoredEvent]:
         # Get records from dynamoDB
-        records = self._get_events_from_dynamo(originator_id, gt, lte, desc,
-                                               limit)
+        records = self._get_events_from_dynamo(originator_id, gt, lte, desc, limit)
         stored_events = [
             StoredEvent(
                 originator_id=UUID(r.originator_id),
                 originator_version=r.originator_version,
                 topic=r.topic,
-                state=r.state
-                if isinstance(r.state, memoryview) else r.state.value,
-            ) for r in records
+                state=r.state if isinstance(r.state, memoryview) else r.state.value,
+            )
+            for r in records
         ]
         return stored_events
 
     def _get_events_from_dynamo(
         self,
-        originator_id: str,
+        originator_id: UUID,
         gt: int | None = None,
         lte: int | None = None,
         desc: bool = False,
@@ -71,18 +69,17 @@ class DynamoAggregateRecorder(AggregateRecorder):
     ) -> List[DynamoStoredEvent]:
         # Get events for originator_id from dynamodb
         if self.dynamo_resource is None:
-            raise ValueError(
-                'Unable to use DynamoDB without a dynamodb resource.')
+            raise ValueError("Unable to use DynamoDB without a dynamodb resource.")
 
         table = self.dynamo_resource.Table(self.dynamo_table_name)
 
-        key_condition_expression = Key('originator_id').eq(str(originator_id))
+        key_condition_expression = Key("originator_id").eq(str(originator_id))
 
         if gt is not None:
-            key_condition_expression &= Key('originator_version').gt(gt)
+            key_condition_expression &= Key("originator_version").gt(gt)
 
         if lte is not None:
-            key_condition_expression &= Key('originator_version').lte(lte)
+            key_condition_expression &= Key("originator_version").lte(lte)
 
         query_kwargs = {
             "KeyConditionExpression": key_condition_expression,
@@ -100,18 +97,18 @@ class DynamoAggregateRecorder(AggregateRecorder):
                 if start_key:
                     query_kwargs["ExclusiveStartKey"] = start_key
                 response = table.query(**query_kwargs)
-                items += response.get('Items', [])
+                items += response.get("Items", [])
                 start_key = response.get("LastEvaluatedKey", None)
                 done = start_key is None
             logger.info(f"Fetched {len(items)} events from database")
             return [DynamoStoredEvent(**item) for item in items]
 
         except ClientError as e:
-            logger.exception("Unable to access table %s in dynamo. %s" %
-                             (self.dynamo_table_name, e.response.get(
-                                 'Error', {}).get('Message')))
-            raise ValueError("Unable to access table %s" %
-                             (self.dynamo_table_name,))
+            logger.exception(
+                "Unable to access table %s in dynamo. %s"
+                % (self.dynamo_table_name, e.response.get("Error", {}).get("Message"))
+            )
+            raise ValueError("Unable to access table %s" % (self.dynamo_table_name,))
 
 
 class DynamoApplicationRecorder(DynamoAggregateRecorder, ApplicationRecorder):
@@ -136,6 +133,5 @@ class DynamoProcessRecorder(DynamoApplicationRecorder, ProcessRecorder):
     def max_tracking_id(self, application_name: str) -> int:
         raise NotImplementedError()
 
-    def has_tracking_id(self, application_name: str,
-                        notification_id: int) -> bool:
+    def has_tracking_id(self, application_name: str, notification_id: int) -> bool:
         raise NotImplementedError()
