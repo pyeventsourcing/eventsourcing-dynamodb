@@ -49,6 +49,7 @@ jobs:
       - name: Create dynamodb table
         run: |
           aws dynamodb create-table \
+              --region us-east-1 \
               --endpoint-url http://localhost:8000 \
               --table-name dynamo_events \
               --attribute-definitions \
