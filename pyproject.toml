@@ -25,13 +25,84 @@ include = ["eventsourcing_dynamodb/py.typed"]
 
 
 [tool.poetry.dependencies]
-python = ">=3.9, <4.0"
+python = ">=3.10, <4.0"
 eventsourcing = "~9.3"
 boto3 = ">=1.36,<2.0.0"
 
 [tool.poetry.group.dev.dependencies]
 pycryptodome = "^3.21.0"
+pytest = "^8.3.4"
+pytest-mock = "^3.14.0"
+pytest-cov = "^6.0.0"
+pytest-html = "^4.1.1"
+black = { version = "*", allow-prereleases = true }
+flake8 = "*"
+flake8-broken-line = "*"
+flake8-bugbear = "*"
+flake8-coding = "*"
+flake8-isort = "*"
+flake8-tidy-imports = "*"
+isort = "*"
+mypy = "*"
+pre-commit = "*"
+pre-commit-hooks = "*"
+types-protobuf = "*"
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+include = '\.pyi?$'
+preview = true
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.pip-cache
+  | \.poetry
+  | \.venv
+  | \.vscode
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.coverage.run]
+branch = true
+omit = []
+
+[tool.coverage.report]
+exclude_lines = [
+  # Have to re-enable the standard pragma
+  "pragma: no cover",
+  # Don't complain about missing debug-only code:
+  "def __repr__",
+  "if self.debug",
+  # Don't complain about some magic methods:
+  "def __str__",
+  # Don't complain if tests don't hit defensive assertion code:
+  "raise AssertionError",
+  "raise NotImplementedError",
+  # Don't complain if non-runnable code isn't run:
+  "if 0:",
+  "if __name__ == .__main__.:",
+  # Don't complain about empty realizations
+  "pass",
+  # Don't complain about abstract methods
+  "@abc.abstractmethod"
+]
+ignore_errors = true
+precision = 2
+
+[tool.isort]
+combine_as_imports = true
+profile = "black"
+sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+skip = ".eggs,.pip-cache,.poetry,venv,.venv,dist"
