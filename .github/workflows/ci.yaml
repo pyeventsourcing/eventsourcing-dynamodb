@@ -48,6 +48,7 @@ jobs:
 
       - name: Create dynamodb table
         run: |
+          aws configure --aws_access_key_id=NONE --aws_secret_access_key=NONE
           aws dynamodb create-table \
               --region us-east-1 \
               --endpoint-url http://localhost:8000 \
