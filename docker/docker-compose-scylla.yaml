@@ -1,0 +1,8 @@
+services:
+  dynamodb:
+    image: scylladb/scylla:latest
+    command:
+     - --alternator-port=8000
+     - --alternator-write-isolation=only_rmw_uses_lwt
+    ports:
+      - "8000:8000"
