@@ -13,7 +13,9 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
     env:
-      EVENTSTORE_IMAGE_TAG: ${{ matrix.eventstore-image-tag }}
+      AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE
+      AWS_SECRET_ACCESS_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+      AWS_DEFAULT_REGION: us-east-1
     runs-on: "ubuntu-24.04"
     steps:
 
@@ -48,8 +50,8 @@ jobs:
 
       - name: Create dynamodb table
         run: |
+          sleep 3 # Lazy
           aws dynamodb create-table \
-              --region us-east-1 \
               --endpoint-url http://localhost:8000 \
               --table-name dynamo_events \
               --attribute-definitions \
