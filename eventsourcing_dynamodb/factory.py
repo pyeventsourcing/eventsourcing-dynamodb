@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import boto3
 from eventsourcing.persistence import (
     AggregateRecorder,

@@ -1,11 +1,10 @@
+# -*- coding: utf-8 -*-
 import os
 from decimal import Decimal
-from itertools import chain
 from uuid import uuid4
 
 from eventsourcing.application import Application, EventSourcedLog
 from eventsourcing.domain import Aggregate, DomainEvent
-from eventsourcing.system import NotificationLogReader
 from eventsourcing.tests.application import (
     TIMEIT_FACTOR,
     BankAccounts,
@@ -52,8 +51,7 @@ class TestApplicationWithDynamoDB(ExampleApplicationTestCase):
         app = BankAccounts()
 
         # Check the factory topic.
-        self.assertEqual(get_topic(type(app.factory)),
-                         self.expected_factory_topic)
+        self.assertEqual(get_topic(type(app.factory)), self.expected_factory_topic)
 
         # Check AccountNotFound exception.
         with self.assertRaises(BankAccounts.AccountNotFoundError):

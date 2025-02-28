@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import logging
 import time
 from typing import Any, List, Sequence
@@ -108,7 +109,9 @@ class DynamoAggregateRecorder(AggregateRecorder):
                 "Unable to access table %s in dynamo. %s"
                 % (self.dynamo_table_name, e.response.get("Error", {}).get("Message"))
             )
-            raise ValueError("Unable to access table %s" % (self.dynamo_table_name,))
+            raise ValueError(
+                "Unable to access table %s" % (self.dynamo_table_name,)
+            ) from e
 
 
 class DynamoApplicationRecorder(DynamoAggregateRecorder, ApplicationRecorder):

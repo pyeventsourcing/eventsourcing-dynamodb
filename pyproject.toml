@@ -1,11 +1,11 @@
-[project]
+[tool.poetry]
 name = "eventsourcing-dynamodb"
 version = "0.1.0"
 description = "Python package for eventsourcing with DynamoDB"
 authors = [
-    {name = "John Bywater",email = "john.bywater@appropriatesoftware.net"}
+    "John Bywater <john.bywater@appropriatesoftware.net>",
 ]
-license = {text = "BSD 3-Clause"}
+license = "BSD 3-Clause"
 classifiers = [
 #    "Development Status :: 3 - Alpha",
     "Development Status :: 4 - Beta",
