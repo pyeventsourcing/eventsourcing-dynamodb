@@ -1,5 +1,4 @@
 import time
-import uuid
 from dataclasses import dataclass
 
 from boto3.dynamodb.types import Binary
