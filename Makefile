@@ -74,20 +74,20 @@ publish:
 
 .PHONY: docker-up
 docker-up:
-	docker-compose -f docker/docker-compose.yaml up -d
-	docker-compose -f docker/docker-compose.yaml ps
+	docker compose -f docker/docker-compose.yaml up -d
+	docker compose -f docker/docker-compose.yaml ps
 
 .PHONY: docker-down
 docker-down:
-	docker-compose -f docker/docker-compose.yaml stop
+	docker compose -f docker/docker-compose.yaml stop
 
 .PHONY: docker-logs
 docker-logs:
-	docker-compose -f docker/docker-compose.yaml logs --follow
+	docker compose -f docker/docker-compose.yaml logs --follow
 
 .PHONY: docker-ps
 docker-ps:
-	docker-compose -f docker/docker-compose.yaml ps
+	docker compose -f docker/docker-compose.yaml ps
 
 .PHONY: create-table
 create-table:
