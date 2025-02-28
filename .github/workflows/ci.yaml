@@ -40,7 +40,7 @@ jobs:
           key: venv-${{ hashFiles('poetry.lock') }}
 
       - name: Install the project dependencies
-        run: make install
+        run: make install-packages
 
       - name: Run mypy
         run: make lint
