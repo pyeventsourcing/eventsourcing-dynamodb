@@ -2,8 +2,10 @@
 
 POETRY_VERSION = 1.6.1
 POETRY ?= poetry
-
 POETRY_INSTALLER_URL ?= https://install.python-poetry.org
+AWS_ACCESS_KEY_ID ?= AKIAIOSFODNN7EXAMPLE
+AWS_SECRET_ACCESS_KEY ?= wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+AWS_DEFAULT_REGION ?= us-east-1
 
 -include $(DOTENV_BASE_FILE)
 -include $(DOTENV_LOCAL_FILE)
@@ -86,3 +88,15 @@ docker-logs:
 .PHONY: docker-ps
 docker-ps:
 	docker-compose -f docker/docker-compose.yaml ps
+
+.PHONY: create-table
+create-table:
+	aws dynamodb create-table \
+              --endpoint-url http://localhost:8000 \
+              --table-name dynamo_events \
+              --attribute-definitions \
+                  AttributeName=originator_id,AttributeType=S \
+                  AttributeName=originator_version,AttributeType=N \
+              --key-schema AttributeName=originator_id,KeyType=HASH AttributeName=originator_version,KeyType=RANGE \
+              --billing-mode PAY_PER_REQUEST \
+#              --no-cli-pager

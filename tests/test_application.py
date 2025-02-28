@@ -25,6 +25,9 @@ class TestApplicationWithDynamoDB(ExampleApplicationTestCase):
         os.environ["PERSISTENCE_MODULE"] = "eventsourcing_dynamodb"
         os.environ["DYNAMO_TABLE"] = "dynamo_events"
         os.environ["DYNAMO_ENDPOINT_URL"] = "http://localhost:8000"
+        os.environ["AWS_ACCESS_KEY_ID"] = "AKIAIOSFODNN7EXAMPLE"
+        os.environ["AWS_SECRET_ACCESS_KEY"] = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+        os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
         os.environ["IS_SNAPSHOTTING_ENABLED"] = "false"
 
     def tearDown(self) -> None:
